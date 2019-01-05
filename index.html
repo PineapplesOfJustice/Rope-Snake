@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rope Snake</title>
+    <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="p5_loading">Rope Snake</div>
+    <div id="canvasContainer"></div><!-- Used so that the pop up instruction will be displayed above the canvas. -->
+    
+           
+      
+    <div id="tutorialSpace" style="display: none">    
+        <div id="tutorialSpaceHeader">Background</div>
+        <div id="deleteButton" onclick="hideTutorialSpace()">X</div><br>
+        <div id="tutorialText">
+            <p>Thank you for buying our snake rope farm! As I am sure you understand when making the purchase, snake can sometime be rope!</p>      
+            <button class="nextButton" onclick="displayNextSlide()">Right arrow: <i class="arrow right"></i></button>
+        </div>    
+    </div>
+    
+    <script src="p5.min.js"></script> 
+    <script src="p5.dom.js"></script>
+    <!--<script src="p5.sound.js"></script>-->
+    <script src="p5.collide2d.js"></script>
+    <script src="data.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
