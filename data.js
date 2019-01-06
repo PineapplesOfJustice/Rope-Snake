@@ -1,8 +1,8 @@
 // Variables
 
-var gameStatus = "active";
+var gameStatus = "active"; // loading, blankScreen, initiation, active, inactive, gameOver, restartSequence
 var gameOverScreen = false;
-var loadingStatus = {current: 0, need: 0, };
+//var loadingStatus = {current: 0, need: 0, };
 var tutorialActive = false;
 var canvas = false;
 
@@ -11,16 +11,18 @@ var food = [];
 var decoration = [];
 var store = [];
 
-var habitat = {};
-var marketPlace = {};
+var habitat = false;
+var marketPlace = false;
 
 var gravity = 0.98;
-var treasury = 10000000;
+var treasury = 4000;
 
 var ropeCapacity = 100;
 var foodCapacity = 1000;
+var acrylicSpawnRate = 5000;
 
 var dragObject = null;
+var tutorialSlide = 1;
 
 var segmentLength = 5;
 var dragDiameter = 25;
@@ -290,6 +292,7 @@ function GrassField(){
         b: 70,
     };
     this.haveGravity = false;
+    this.amountOfDecorationSpawn = 50;
 }
 GrassField.prototype.addDecoration = function(amount){
     for(var a=0; a<amount; a++){
@@ -306,6 +309,7 @@ function Aquarium(){
     };
     this.bubbleSpawnRate = 125;
     this.haveGravity = true;
+    this.amountOfDecorationSpawn = 1;
 }
 Aquarium.prototype.addDecoration = function(amount){
     for(var a=0; a<amount; a++){
@@ -326,6 +330,7 @@ function TrueSpace(){
         b: 0,
     };
     this.haveGravity = false;
+    this.amountOfDecorationSpawn = 0;
 }
 TrueSpace.prototype.addDecoration = function(amount){
     // Nothing
@@ -602,6 +607,11 @@ CottonSnake.prototype.hungerUpdate = function(){
                     rope[i].index -= 1;
                 }
                 rope.splice(this.index, 1);
+                for(var i=0, length=rope.length; i<length; i++){
+                    if(rope[i].closestFood){
+                        rope[i].findFood();
+                    }
+                }
                 return true;
             }
         }
@@ -742,7 +752,7 @@ function WoolSnake(x, y, length, theta, index){
         max: 100,
         need: 1.5,
         hungry: false,
-        brightnessPenalty: 80,
+        brightnessPenalty: 50,
     }
     
     this.index = index;
@@ -813,6 +823,11 @@ WoolSnake.prototype.hungerUpdate = function(){
                     rope[i].index -= 1;
                 }
                 rope.splice(this.index, 1);
+                for(var i=0, length=rope.length; i<length; i++){
+                    if(rope[i].closestFood){
+                        rope[i].findFood();
+                    }
+                }
                 return true;
             }
         }
@@ -1024,6 +1039,11 @@ SilkSnake.prototype.hungerUpdate = function(){
                     rope[i].index -= 1;
                 }
                 rope.splice(this.index, 1);
+                for(var i=0, length=rope.length; i<length; i++){
+                    if(rope[i].closestFood){
+                        rope[i].findFood();
+                    }
+                }
                 return true;
             }
         }
@@ -1160,12 +1180,12 @@ function AcrylicSnake(x, y, length, theta, index){
     this.snakeColor = {
         h: 0,  
         s: 270,  
-        b: 150,  
+        b: 190,  
     }     
     this.ropeColor = {
         h: 0,  
         s: 270,  
-        b: 190,  
+        b: 230,  
     }  
     this.strokeWeight = 10;
     
@@ -1245,6 +1265,11 @@ AcrylicSnake.prototype.hungerUpdate = function(){
                     rope[i].index -= 1;
                 }
                 rope.splice(this.index, 1);
+                for(var i=0, length=rope.length; i<length; i++){
+                    if(rope[i].closestFood){
+                        rope[i].findFood();
+                    }
+                }
                 return true;
             }
         }
@@ -1286,6 +1311,7 @@ AcrylicSnake.prototype.findFood = function(){
     } 
     else{  
         this.isSold = true;
+        this.isDragged = false;
     }  
 }
 AcrylicSnake.prototype.getFood = function(){   
@@ -2004,24 +2030,22 @@ console.clear();
 
 console.log("\nPlayer's Control: \n \n"
             + "Mouse Input: \n"
-            + "Mouse Press: Feed Snake \n"
-            + "Mouse Press: Grab Rope \n"
+            + "Mouse Press: Release Food \n"
+            + "Mouse Press: Grab Snake \n"
             + "Mouse Released: Release Snake \n \n"
             + "Keyboard Input: \n"
             + "Z Keydown: Buy Cotton Snake \n"
-            + "Z Keydown: Buy Wool Snake \n"
-            + "X Keydown: Buy Silk Snake \n"
-            + "C Keydown: Buy Cotton Snake \n"
+            + "X Keydown: Buy Wool Snake \n"
+            + "C Keydown: Buy Silk Snake \n"
             + "V Keydown: Upgrade Food \n"
-            + "B Keydown: Increase Cotton \n \n"
+            + "B Keydown: Increase Food \n \n"
             + "I Keydown: Toggle Tutorial \n"
             + "O Keydown: Toggle fullscreen \n"
-            + "P Keydown: Toggle Display \n \n"
+            + "P Keydown: Add $10,000 \n \n"
             + "1 Keydown: Spawn Cotton Snake \n"
             + "2 Keydown: Spawn Wool Snake \n"
             + "3 Keydown: Spawn Silk Snake \n"
-            + "4 Keydown: Spawn Acrylic Snake \n"
-            + "5 Keydown: Add $10,000 \n \n"
+            + "4 Keydown: Spawn Acrylic Snake \n \n"
             + "Space Keydown: Pause game \n"
             + "R Keydown: Restart \n"
             + "T Keydown: Title Screen \n \n" 

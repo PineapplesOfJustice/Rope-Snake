@@ -4,23 +4,18 @@ function loadFinished(loadedFile){
     loadingStatus.current += 1;
     if(loadingStatus.current == loadingStatus.need){
         setTimeout(function(){
-            gameStatus = "blankScreen"
-            updateInput();
-            pokeball.data = [];
-            beacon = [];
+            gameStatus = "blankScreen";
             background(0);
         }, 1800);
         setTimeout(function(){
             gameStatus = "initiation";
-            pokeball.data = [];
-            beacon = [];
         }, 2100);
     }
 }
 
 function preload() {
-    fontSrc["chakraPetch"] = loadFont("Assets/Fonts/ChakraPetch-Medium.ttf", loadFinished);
-    fontSrc["fellEnglish"] = loadFont("Assets/Fonts/Fell English.ttf", loadFinished);
+    fontSrc["chakraPetch"] = loadFont("Assets/Fonts/ChakraPetch-Medium.ttf");
+    fontSrc["fellEnglish"] = loadFont("Assets/Fonts/Fell English.ttf");
 }
 
 function setup() {
@@ -37,31 +32,24 @@ function setup() {
     canvas.parent("canvasContainer");
     colorMode(HSL, 360);
     
-    //gameStatus = "loading";
-
-    rope.push(new CottonSnake(50, 100+50, 250, 0, 0));
-    
-    store.push(new CottonSnakeStore());
-    store.push(new WoolSnakeStore());
-    store.push(new SilkSnakeStore());
-    store.push(new FoodUpgrade());
-    store.push(new FoodQuantity());
-    
     habitat = new TrueSpace();
-    habitat.addDecoration(1);
-    
     marketPlace = new SpaceMarket();
     
-    //displayTutorialAgain();
+    gameStatus = "initiation";
 }
 
 
 // Main Loop
 
 function draw() {
-    background(habitat.color.h, habitat.color.s, habitat.color.b);
-    if(habitat.specialFeature != null){
-        habitat.specialFeature();
+    if(habitat){
+        background(habitat.color.h, habitat.color.s, habitat.color.b);
+        if(habitat.specialFeature != null){
+            habitat.specialFeature();
+        }
+    }
+    else{
+        background("black");
     }
   
     for(var d=0, decorationLength=decoration.length; d<decorationLength; d++){
@@ -76,7 +64,9 @@ function draw() {
         }
     } 
     
-    marketPlace.showGround();
+    if(marketPlace){
+        marketPlace.showGround();
+    }
     
     for(var f=0, foodLength=food.length; f<foodLength; f++){
         var current = food[f];
@@ -138,7 +128,10 @@ function draw() {
         }
     }
     
-    marketPlace.showSign();
+    if(marketPlace){
+        marketPlace.showSign();
+    }
+    spawnAcrylicSnake();
     
     textFont(fontSrc["chakraPetch"]);
     textAlign(RIGHT, TOP);
@@ -149,121 +142,85 @@ function draw() {
     text("Treasury: " + treasury.toLocaleString('en-US', { style: 'currency', currency: 'USD' }).slice(0, -3), width-15, 15);
     text("Snake: " + rope.length + "/" + ropeCapacity, width-15, 50);
     text("Food: " + food.length + "/" + foodCapacity, width-15, 85);
-
-    if(gameStatus == "initiation"){
-        push();
+    
+    if(treasury < 5000 && rope.length == 0 && gameStatus == "active"){
+        gameStatus = "gameOver";
+        gameOverScreen = true;
+    }
+    else if(gameStatus == "initiation"){
+        fill(0);
+        rect(0, 0, width, height);
         textFont(fontSrc["chakraPetch"]);
-        textAlign(CENTER, BOTTOM);  
+        textAlign(CENTER, TOP);  
         textSize(64);
         stroke("black");
         strokeWeight(5);
         fill("white");
-        text("Mission: Defense", width*4/7, height*3/7);  
-        if(sin(frameCount*0.05) > -0.64){  
-            textAlign(CENTER, TOP);  
-            textSize(30);
-            strokeWeight(3);
-            text("Click to Start", width*4/7, height*3/7); 
+        text("Rope Snake", width/2, height/10);  
+        textSize(20);
+        text("Choose your Farm", width/2, height*3/7);
+        
+        fill("black");
+        stroke("white");
+        strokeWeight(3);
+        if(collidePointRect(mouseX, mouseY, width/2-100, height*4/7, 200, 50)){
+            fill(220, 250, 70);
         }
-        pop();  
+        rect(width/2-100, height*4/7, 200, 50, 5);
+        fill("white");
+        stroke("black");
+        strokeWeight(3);
+        text("Aquarium", width/2, height*4/7+10);
+        
+        fill("black");
+        stroke("white");
+        strokeWeight(3);
+        if(collidePointRect(mouseX, mouseY, width/4-100, height*4/7, 200, 50)){
+            fill(100, 250, 70);
+        }
+        rect(width/4-100, height*4/7, 200, 50, 5);
+        fill("white");
+        stroke("black");
+        strokeWeight(3);
+        text("Grass Field", width/4, height*4/7+10);
+        
+        fill("black");
+        stroke("white");
+        strokeWeight(3);
+        rect(width*3/4-100, height*4/7, 200, 50, 5);
+        fill("white");
+        stroke("black");
+        if(collidePointRect(mouseX, mouseY, width*3/4-100, height*4/7, 200, 50)){
+            line(width*3/4-100, height*4/7, width*3/4-20, height*4/7+50);
+            line(width*3/4-20, height*4/7+50, width*3/4, height*4/7);
+            line(width*3/4, height*4/7, width*3/4+20, height*4/7+50);
+            line(width*3/4+20, height*4/7+50, width*3/4+100, height*4/7);
+            
+        }
+        strokeWeight(3);
+        text("True Space", width*3/4, height*4/7+10);
     }
     else if(gameOverScreen){
-        noStroke();
-        fill(0, 0, 0, 55+sin(frameCount*0.05)*25);
-        rect(0, 0, width, height);
-        push();
         textFont(fontSrc["chakraPetch"]);
         textAlign(CENTER, BOTTOM);
-        textSize(64);
+        textSize(45);
         stroke("black");
-        strokeWeight(5);
+        strokeWeight(7);
         fill("white");
-        text("Game Over: Bankruptcy", width*4/7, height*3/7);  
+        text("Game Over: Bankruptcy", width/2, height*3/7);  
         if(sin(frameCount*0.05) > -0.64){  
             textAlign(CENTER, TOP);  
             textSize(30);
-            strokeWeight(3);
-            text("Press Space to restart", width*4/7, height*3/7); 
+            strokeWeight(5);
+            text("Press Space", width/2, height*3/7); 
         }
-        pop();
     }    
-
-    else if(gameStatus == "loading"){
-        background(0);
-        image(imageSrc["graySky"], 0, 0, 1200, 640);
-        fill(0, 0, 0, 150);
-        rect(0, 0, 1200, 640);
-        textAlign(CENTER, CENTER);
-        for(var i=0, length=beacon.length; i<length; i++){
-			fill("red")
-            stroke("black")
-            strokeWeight(1);
-            textSize(15);
-			text("R", beacon[i].x, beacon[i].y);
-			var currentAlpha = map(beacon[i].radius, 0, beacon[i].limit, 300, 100)
-			var currentWeight = map(beacon[i].radius, 0, beacon[i].limit, 5, 1)
-            stroke(0, 0, 255, currentAlpha)
-			strokeWeight(currentWeight)
-            noFill();
-			ellipse(beacon[i].x, beacon[i].y, beacon[i].radius,  beacon[i].radius);
-			beacon[i].radius += beacon[i].expansionSpeed;
-			if(beacon[i].radius > beacon[i].limit){
-				beacon.splice(i, 1);
-				i -= 1;
-				length -= 1;
-			}
-		}
-        if(frameCount % 7 == 0){
-            pokeball.data[pokeball.data.length] = {
-            x: Math.random()*(400) + 400,
-            y: 92,
-            moveX: 0,
-            moveY: 0,
-            affectedByGravity: true,
-            type: "pokeball",
-            };
+    if(gameStatus == "restartSequence"){
+        if(rope.length == 0){
+            gameOverScreen = false;
+            resetGame(false);
+            startGame();
         }
-        for(var i=0, length=pokeball.data.length; i<length; i++){
-            push();
-            var pokeballRotation = findRotation(pokeball.data[i].moveX, pokeball.data[i].moveY);
-
-            translate(pokeball.data[i].x, pokeball.data[i].y);
-            rotate(pokeballRotation);
-            image(imageSrc[pokeball.data[i].type], 0, pokeball.height/2*-1, pokeball.width, pokeball.height);
-            pop();
-            if((pokeball.data[i].y-pokeball.height/2) > (height*5/6-60)){
-                pokeball.data.splice(i, 1);
-                i -= 1;
-                length -= 1;
-            }
-        }
-        
-        strokeWeight(3);
-		stroke("white")
-		fill("white")
-		rect(375, height*5/6-15, width-750, 30, 5)
-		var currentWidth = map(loadingStatus.current, 0, loadingStatus.need, 0, width-750)
-		fill("green")
-		rect(375, height*5/6-15, currentWidth, 30, 5)
-        
-        var headerText = "Welcome to Kanto!";
-        textFont(fontSrc["chakraPetch"]);
-        textAlign(CENTER, TOP);
-        fill("white");
-        textSize(80);
-        text(headerText, width/2, 0);
-        stroke("white");
-        var headerWidth = textWidth(headerText)
-        rect(width/2-headerWidth/2, 84, headerWidth, 4);
-        stroke("black");
-        
-        textAlign(RIGHT, BOTTOM);
-        noStroke();
-        textSize(25);
-        text("Version 1.2", width-20, height-10);
-    }
-    else if(gameStatus == "blankScreen"){
-        background(0);
     }
 }
 
@@ -271,75 +228,227 @@ function draw() {
 // Player's Interaction
 
 function mousePressed() {
-    var objectCollision = false;
-    
-    if(collidePointRect(mouseX, mouseY, marketPlace.postSign.x, marketPlace.postSign.y, marketPlace.postSign.w, marketPlace.postSign.l)){
-        rope.push(new AcrylicSnake(width, height-50, 50, -PI, rope.length));
-        objectCollision = true;
-    }
-    
-    for(var s=0, storeLength=store.length; s<storeLength; s++){  
-        var object = store[s];
-        if(collidePointRect(mouseX, mouseY, object.x, object.y, object.w, object.l)){
-            if(object.unlocked && object.buy != null){
-                object.buy();
-            }
-            else if(object.unlocked && object.upgrade != null){
-                object.upgrade();
-            }
-            else{
-                object.unlock();
-            }
+    if(gameStatus == "active" || gameStatus == "gameOver"){
+        var objectCollision = false;
+
+        if(collidePointRect(mouseX, mouseY, marketPlace.postSign.x, marketPlace.postSign.y, marketPlace.postSign.w, marketPlace.postSign.l)){
+            rope.push(new AcrylicSnake(width, height-50, 50, -PI, rope.length));
             objectCollision = true;
-            s = storeLength;
         }
-    }
-    
-    for(var r=0, ropeLength=rope.length; r<ropeLength && !objectCollision; r++){
-        if(!rope[r].isSold){
-            for(var object of rope[r].segment){  
-                if(collidePointLine(mouseX, mouseY, object.origin.x, object.origin.y, object.destination.x, object.destination.y, dragDiameter)){
-                    dragObject = object;
-                    dragObject.parent.isDragged = true;
-                    dragObject.parent.isSnake = false;
-                    objectCollision = true;
+
+        for(var s=0, storeLength=store.length; s<storeLength; s++){  
+            var object = store[s];
+            if(collidePointRect(mouseX, mouseY, object.x, object.y, object.w, object.l)){
+                if(object.unlocked && object.buy != null){
+                    object.buy();
+                }
+                else if(object.unlocked && object.upgrade != null){
+                    object.upgrade();
+                }
+                else{
+                    object.unlock();
+                }
+                objectCollision = true;
+                s = storeLength;
+            }
+        }
+
+        for(var r=0, ropeLength=rope.length; r<ropeLength && !objectCollision; r++){
+            if(!rope[r].isSold){
+                for(var object of rope[r].segment){  
+                    if(collidePointLine(mouseX, mouseY, object.origin.x, object.origin.y, object.destination.x, object.destination.y, dragDiameter)){
+                        dragObject = object;
+                        dragObject.parent.isDragged = true;
+                        dragObject.parent.isSnake = false;
+                        objectCollision = true;
+                    }
                 }
             }
         }
-    }
-    
-    if(!objectCollision && collidePointRect(mouseX, mouseY, 15, 15, width-30, height-30) && food.length < foodCapacity){
-        if(foodPerClick == 1){
-            spawnFood(mouseX, mouseY, foodDimension, foodDimension, Math.random()*360, Math.random()*50+150, Math.random()*50+100, "white");
-        }
-        else if(foodPerClick == 3){
-            spawnFood(mouseX-foodDimension*3/4+(Math.random()-0.5)*foodDimension/2, mouseY+foodDimension*3/4+(Math.random()-0.5)*foodDimension/2, foodDimension, foodDimension, Math.random()*360, Math.random()*50+150, Math.random()*50+100, "white");  
-            spawnFood(mouseX+foodDimension*3/4+(Math.random()-0.5)*foodDimension/2, mouseY+foodDimension*3/4+(Math.random()-0.5)*foodDimension/2, foodDimension, foodDimension, Math.random()*360, Math.random()*50+150, Math.random()*50+100, "white");  
-            spawnFood(mouseX+(Math.random()-0.5)*foodDimension/2, mouseY+foodDimension/4+(Math.random()-0.5)*foodDimension/2, foodDimension, foodDimension, Math.random()*360, Math.random()*50+150, Math.random()*50+100, "white");  
-        }
-        else{
-            for(var i=0; i<foodPerClick; i++){
-                spawnFood(mouseX+(Math.random()-0.5)*foodDimension*foodPerClick/2, mouseY-foodDimension/2+(Math.random()-0.5)*foodDimension*foodPerClick/2, foodDimension, foodDimension, Math.random()*360, Math.random()*50+150, Math.random()*50+100, "white"); 
+
+        if(!objectCollision && collidePointRect(mouseX, mouseY, 15, 15, width-30, height-30) && food.length < foodCapacity){
+            if(foodPerClick == 1){
+                spawnFood(mouseX, mouseY, foodDimension, foodDimension, Math.random()*360, Math.random()*50+150, Math.random()*50+100, "white");
             }
-        } 
-    }  
+            else if(foodPerClick == 3){
+                spawnFood(mouseX-foodDimension*3/4+(Math.random()-0.5)*foodDimension/2, mouseY+foodDimension*3/4+(Math.random()-0.5)*foodDimension/2, foodDimension, foodDimension, Math.random()*360, Math.random()*50+150, Math.random()*50+100, "white");  
+                spawnFood(mouseX+foodDimension*3/4+(Math.random()-0.5)*foodDimension/2, mouseY+foodDimension*3/4+(Math.random()-0.5)*foodDimension/2, foodDimension, foodDimension, Math.random()*360, Math.random()*50+150, Math.random()*50+100, "white");  
+                spawnFood(mouseX+(Math.random()-0.5)*foodDimension/2, mouseY+foodDimension/4+(Math.random()-0.5)*foodDimension/2, foodDimension, foodDimension, Math.random()*360, Math.random()*50+150, Math.random()*50+100, "white");  
+            }
+            else{
+                for(var i=0; i<foodPerClick; i++){
+                    spawnFood(mouseX+(Math.random()-0.5)*foodDimension*foodPerClick/2, mouseY-foodDimension/2+(Math.random()-0.5)*foodDimension*foodPerClick/2, foodDimension, foodDimension, Math.random()*360, Math.random()*50+150, Math.random()*50+100, "white"); 
+                }
+            } 
+        }  
+    }
+    else if(gameStatus == "initiation"){
+        if(collidePointRect(mouseX, mouseY, width/4-100, height*4/7, 200, 50)){
+            habitat = new GrassField();
+            marketPlace = new LandMarket();
+            resetGame(false);
+            habitat.addDecoration(habitat.amountOfDecorationSpawn);
+            startGame();
+            if(!window.sessionStorage.tutorialDisplayed){
+                displayTutorial();
+                window.sessionStorage.tutorialDisplayed = true;
+            }
+        }
+        else if(collidePointRect(mouseX, mouseY, width/2-100, height*4/7, 200, 50)){
+            habitat = new Aquarium();
+            marketPlace = new SeaMarket();
+            resetGame(false);
+            habitat.addDecoration(habitat.amountOfDecorationSpawn);
+            startGame();
+            if(!window.sessionStorage.tutorialDisplayed){
+                displayTutorial();
+                window.sessionStorage.tutorialDisplayed = true;
+            }
+        }
+        else if(collidePointRect(mouseX, mouseY, width*3/4-100, height*4/7, 200, 50)){
+            habitat = new TrueSpace();
+            marketPlace = new SpaceMarket();
+            resetGame(false);
+            habitat.addDecoration(habitat.amountOfDecorationSpawn);
+            startGame();
+            if(!window.sessionStorage.tutorialDisplayed){
+                displayTutorial();
+                window.sessionStorage.tutorialDisplayed = true;
+            }
+        }
+    }
 }
 
 function mouseReleased() {
-    if(dragObject != null && collidePointEllipse(dragObject.destination.x, dragObject.destination.y, marketPlace.ground.x, marketPlace.ground.y, marketPlace.ground.dx, marketPlace.ground.dy)){
-        dragObject.parent.sell();
-        dragObject = null;
-    }
-    else if(dragObject != null){
-        dragObject.parent.isDragged = false;
-        dragObject.parent.isSnake = true;
-        dragObject = null;
+    if(gameStatus == "active"){
+        if(dragObject != null && collidePointEllipse(dragObject.destination.x, dragObject.destination.y, marketPlace.ground.x, marketPlace.ground.y, marketPlace.ground.dx, marketPlace.ground.dy)){
+            dragObject.parent.sell();
+            dragObject = null;
+        }
+        else if(dragObject != null){
+            dragObject.parent.isDragged = false;
+            dragObject.parent.isSnake = true;
+            dragObject = null;
+        }
     }
 }
 
-function keyPressed(){
+function keyPressed(){    
+    // Z Key
+    if(keyCode == 90 && (gameStatus == "active" || gameStatus == "gameOver")){
+        if(store[0].unlocked){
+            if(store[0].buy != null){
+                store[0].buy();
+            }
+            else if(store[0].upgrade != null){
+                store[0].upgrade();
+            }
+        }
+        else{
+            store[0].unlock();
+        }
+    }
+    // X Key
+    else if(keyCode == 88 && (gameStatus == "active" || gameStatus == "gameOver")){
+        if(store[1].unlocked){
+            if(store[1].buy != null){
+                store[1].buy();
+            }
+            else if(store[1].upgrade != null){
+                store[1].upgrade();
+            }
+        }
+        else{
+            store[1].unlock();
+        }
+    }
+    // C Key
+    else if(keyCode == 67 && (gameStatus == "active" || gameStatus == "gameOver")){
+        if(store[2].unlocked){
+            if(store[2].buy != null){
+                store[2].buy();
+            }
+            else if(store[2].upgrade != null){
+                store[2].upgrade();
+            }
+        }
+        else{
+            store[2].unlock();
+        }
+    }
+    // V Key
+    else if(keyCode == 86 && (gameStatus == "active" || gameStatus == "gameOver")){
+        if(store[3].unlocked){
+            if(store[3].buy != null){
+                store[3].buy();
+            }
+            else if(store[3].upgrade != null){
+                store[3].upgrade();
+            }
+        }
+        else{
+            store[3].unlock();
+        }
+    }
+    // B Key
+    else if(keyCode == 66 && (gameStatus == "active" || gameStatus == "gameOver")){
+        if(store[4].unlocked){
+            if(store[4].buy != null){
+                store[4].buy();
+            }
+            else if(store[4].upgrade != null){
+                store[4].upgrade();
+            }
+        }
+        else{
+            store[4].unlock();
+        }
+    }
+    
+    // 1 Key
+    else if(keyCode == 49 && (gameStatus == "active" || gameStatus == "gameOver")){
+        if(rope.length < ropeCapacity){
+            rope.push(new CottonSnake(store[0].x+(Math.random()*store[0].w/2)+store[0].w/4, store[0].y+store[0].l-Math.sin(PI/2)*Math.floor(50/segmentLength)*segmentLength, 50, PI/2, rope.length));
+        }
+    }
+    // 2 Key
+    else if(keyCode == 50 && (gameStatus == "active" || gameStatus == "gameOver")){
+        if(rope.length < ropeCapacity){
+            rope.push(new WoolSnake(store[1].x+(Math.random()*store[1].w/2)+store[1].w/4, store[1].y+store[1].l-Math.sin(PI/2)*Math.floor(50/segmentLength)*segmentLength, 50, PI/2, rope.length));
+        }
+    }
+    // 3 Key
+    else if(keyCode == 51 && (gameStatus == "active" || gameStatus == "gameOver")){
+        if(rope.length < ropeCapacity){
+            rope.push(new SilkSnake(store[2].x+(Math.random()*store[2].w/2)+store[2].w/4, store[2].y+store[2].l-Math.sin(PI/2)*Math.floor(50/segmentLength)*segmentLength, 50, PI/2, rope.length));
+        }
+    }
+    // 4 Key
+    else if(keyCode == 52 && (gameStatus == "active" || gameStatus == "gameOver")){
+        rope.push(new AcrylicSnake(width, height-50, 50, -PI, rope.length));
+    }
+    
+    // I Key
+    else if(keyCode == 73 && (gameStatus == "active" || gameStatus == "inactive" || gameStatus == "gameOver")){
+        if(tutorialActive){
+            hideTutorialSpace();
+        }
+        else{
+            displayTutorial();
+        }
+    }
+    // O Key
+    else if(keyCode == 79){
+        var currentStatus = fullscreen();
+        fullscreen(!currentStatus);
+    }
+    // P Key
+    else if(keyCode == 80 && (gameStatus == "active" || gameStatus == "gameOver")){
+        treasury += 10000;
+    }
+    
     // Space Key
-    if(keyCode == 32 && gameStatus == 'active'){
+    else if(keyCode == 32 && gameStatus == 'active'){
         if(dragObject != null){
             dragObject.parent.isDragged = false;
             dragObject.parent.isSnake = true;
@@ -349,17 +458,8 @@ function keyPressed(){
         noLoop();
     }
     else if(keyCode == 32 && gameStatus == 'gameOver'){
-        for(var b=0, bossLength=boss.data.length; b<bossLength; b++){
-            pokeball.data[pokeball.data.length] = { x: boss.data[b].x+boss[boss.data[b].type].width/2-pokeball.width/2, y: boss.data[b].y+boss[boss.data[b].type].height/2-pokeball.height/2, moveX: 0, moveY: 0, affectedByGravity: true, type: "masterball", empty: true, value: 50000, };
-            boss.data.splice(b, 1);
-            b -= 1;
-            bossLength -= 1;
-        }
-        for(var h=0, enemyLength=enemy.data.length; h<enemyLength; h++){
-            pokeball.data[pokeball.data.length] = { x: enemy.data[h].x+enemy[enemy.data[h].type].width/2-pokeball.width/2, y: enemy.data[h].y+enemy[enemy.data[h].type].height/2-pokeball.height/2, moveX: 0, moveY: 0, affectedByGravity: true, type: "rocketball", empty: true, value: 1000, };
-            enemy.data.splice(h, 1);
-            h -= 1;
-            enemyLength -= 1;
+        for(var i=0; i<5; i++){
+            rope.push(new AcrylicSnake(width, height-50, 50, -PI, rope.length));
         }
         gameStatus = "restartSequence";
     }
@@ -367,28 +467,17 @@ function keyPressed(){
         gameStatus = "active";
         loop();
     }
-    
     // R Key
-    else if(keyCode == 82){
-        for(var b=0, bossLength=boss.data.length; b<bossLength; b++){
-            pokeball.data[pokeball.data.length] = { x: boss.data[b].x+boss[boss.data[b].type].width/2-pokeball.width/2, y: boss.data[b].y+boss[boss.data[b].type].height/2-pokeball.height/2, moveX: 0, moveY: 0, affectedByGravity: true, type: "masterball", empty: true, value: 50000, };
-            boss.data.splice(b, 1);
-            b -= 1;
-            bossLength -= 1;
-        }
-        for(var h=0, enemyLength=enemy.data.length; h<enemyLength; h++){
-            pokeball.data[pokeball.data.length] = { x: enemy.data[h].x+enemy[enemy.data[h].type].width/2-pokeball.width/2, y: enemy.data[h].y+enemy[enemy.data[h].type].height/2-pokeball.height/2, moveX: 0, moveY: 0, affectedByGravity: true, type: "rocketball", empty: true, value: 1000, };
-            enemy.data.splice(h, 1);
-            h -= 1;
-            enemyLength -= 1;
+    else if(keyCode == 82 && (gameStatus == "active" ||  gameStatus == "gameOver" || gameStatus == "restartSequence")){
+        for(var i=0; i<5; i++){
+            rope.push(new AcrylicSnake(width, height-50, 50, -PI, rope.length));
         }
         gameStatus = "restartSequence";
+    }  
+    // T Key
+    else if(keyCode == 84 && (gameStatus == "active" || gameStatus == "gameOver")){
+        resetGame(true);
     }    
-    // O Key
-    else if(keyCode == 79){
-        var currentStatus = fullscreen();
-        fullscreen(!currentStatus);
-    }
 }
 
 function windowResized(){
@@ -415,6 +504,18 @@ function spawnFood(x, y, w, l, fillColorH, fillColorS, fillColorB, strokeColor){
     }
     if(foodLevel == 3){
         food.push(new FoodLevel3(x, y, w, l, fillColorH, fillColorS, fillColorB, strokeColor));
+    }
+}
+
+function spawnAcrylicSnake(){
+    if(frameCount % acrylicSpawnRate == 0 && rope.length > 0 && gameStatus == "active"){
+        if(Math.random() < 0.7){
+            rope.push(new AcrylicSnake(width, height-50, 50, -PI, rope.length));
+        }
+        else{
+            rope.push(new AcrylicSnake(width, height-50, 50, -PI, rope.length));
+            rope.push(new AcrylicSnake(width, height-50, 50, -PI, rope.length));
+        }
     }
 }
 
@@ -466,21 +567,36 @@ function romanNumeral(number) {
 
 // Reset Function
 
-function resetGame(){
-    treasury = 10000;
-    captureCount.current = 0;
-    captureCount.toNextLevel = 1;
-    chargeMeter.current = 0;
-    powerUp.freezeTimer = 0;
-    powerUp.launcherTimer = 0;
-    for(var p=0, powerLength=powerUp.data.length; p<powerLength; p++){
-        powerUp.data[p].waitTime.current = 0;
+function resetGame(trueReset){
+    treasury = 25000;
+    foodLevel = 1;
+    foodPerClick = 1;
+    rope = [];
+    food = [];
+    store = [];
+    if(trueReset){
+        habitat = false;
+        marketPlace = false;
+        decoration = [];
     }
-    pokeball.data = [];
-    enemy.data = [];
-    boss.data = [];
-    boss.maxLength = 0;
-    boss.previous = false;
+    if(tutorialActive){
+        hideTutorialSpace();
+    }
+    frameCount = 0;
+    gameStatus = "initiation";
+}
+
+function startGame(){
+    rope.push(new CottonSnake(50, 150, 250, 0, 0));
+    
+    store.push(new CottonSnakeStore());
+    store.push(new WoolSnakeStore());
+    store.push(new SilkSnakeStore());
+    store.push(new FoodUpgrade());
+    store.push(new FoodQuantity());    
+    
+    //console.log(frameCount);
+    gameStatus = "active";
 }
 
 
@@ -517,6 +633,18 @@ function dragElement(elmnt) {
         // set the element's new position:
         elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
         elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        if(elmnt.offsetLeft > windowWidth-330){
+            elmnt.style.left = (windowWidth - 330) + "px";
+        }
+        else if(elmnt.offsetLeft < 330){
+            elmnt.style.left = 330 + "px";
+        }
+        if(elmnt.offsetTop > windowHeight-155){
+            elmnt.style.top = (windowHeight - 155) + "px";
+        }
+        else if(elmnt.offsetTop < 155){
+            elmnt.style.top = 155 + "px";
+        }
     }
 
     function closeDragElement() {
@@ -526,10 +654,10 @@ function dragElement(elmnt) {
     }
 }
 
-function displayTutorialAgain(){
+function displayTutorial(){
     document.getElementById("tutorialSpace").setAttribute("style", "display: inline; top: 50%; left: 50%; transform: (-50%, -50%);");  
-    slide = 1;  
-    displayNextSlide();
+    tutorialSlide = 1;  
+    tutorialContent();
     tutorialActive = true;
     if(dragObject != null){
         dragObject.parent.isDragged = false;
@@ -552,11 +680,39 @@ function hideTutorialSpace(){
     loop();
 }
 
-var slide=1;
-function displayNextSlide(){
-    if(slide == 1){
-        document.getElementById("tutorialText").innerHTML = "<p>Welcome to Greece! You are the first volunteer to try out the new Labyrinth built by Daedalus! However, be warned that not all test dummies came out safely. But don't worry. The gods, themselves, oversee your journey. Athena, goddess of knowledge, blesses you with the brain to navigate the maze. Hermes, god of thief, make you the supreme sneak! Ares, god of war, gave you the courage to push forth. Daedalus himself gave you the key. Go, Hero!</p><button class='nextButton' onclick='displayNextSlide()'>Next: <i class='arrow right'></i></button>"; 
+function tutorialContent(){
+    if(tutorialSlide == 1){
+        document.getElementById("tutorialText").innerHTML = "<p style='text-indent: 50px;'>In Schrödinger's famous experiment, a cat cans be simutaneously alive, dead, or both. Likewise, a snake rope is simultaneously a snake, a rope, and a snake rope. At your very own snake rope farm, you will rear and harvest the next generation of snake rope for the greater good of the public. But not all will be pleased by your successes. In the battle to claim the cream of the business, Sir Piente engineered a cannibalistic breed to unleash on his competitors. Best of luck to you, my successor.</p><button class='nextButton' onclick='displayNextSlide()'>Next: <i class='arrow right'></i></button>"; 
         document.getElementById("tutorialSpaceHeader").innerHTML = "Background";
-        slide = 2;
-  }
+    }
+    else if(tutorialSlide == 2){
+        document.getElementById("tutorialText").innerHTML = "<p>Mouse Input:<br>&emsp;Mouse Press: Grab snake/Release Food<br>&emsp;Mouse Release: Release Snake<br>Keyboard Input:<br>&emsp;Space Keydown: Pause<br>&emsp;R Keydown: Restart<br>&emsp;T Keydown: Title Screen<br>&emsp;I Keydown: Toggle Tutorial<br>&emsp;O Keydown: Toggle Fullscreen</p><button class='previousButton' onclick='displayPreviousSlide()'><i class='arrow left'></i> :Previous</button><button class='nextButton' onclick='displayNextSlide()'>Next: <i class='arrow right'></i></button>"; 0
+        document.getElementById("tutorialSpaceHeader").innerHTML = "Instruction";
+    }
+    else if(tutorialSlide == 3){
+        document.getElementById("tutorialText").innerHTML = "<p>Cotton Snake:<br>&emsp;Length: 50 - 300 units<br>&emsp;Diameter: 12 units<br>&emsp;Hatchling Price: $5,000<br>&emsp;Retail Price: $50 per unit<br>&emsp;Diet: Food Pellet<br>&emsp;Speed: 4 units per frame<br>&emsp;Characteristic: Big Appetite</p><button class='previousButton' onclick='displayPreviousSlide()'><i class='arrow left'></i> :Previous</button><button class='nextButton' onclick='displayNextSlide()'>Next: <i class='arrow right'></i></button>"; 0
+        document.getElementById("tutorialSpaceHeader").innerHTML = "Snakopedia";
+    }
+    else if(tutorialSlide == 4){
+        document.getElementById("tutorialText").innerHTML = "<p>Wool Snake:<br>&emsp;Length: 50 - 1000 units<br>&emsp;Diameter: 15 units<br>&emsp;Hatchling Price: $10,000<br>&emsp;Retail Price: $50 per unit<br>&emsp;Diet: Food Pellet<br>&emsp;Speed: 3 units per frame<br>&emsp;Characteristic: Warm-blooded</p><button class='previousButton' onclick='displayPreviousSlide()'><i class='arrow left'></i> :Previous</button><button class='nextButton' onclick='displayNextSlide()'>Next: <i class='arrow right'></i></button>"; 0
+        document.getElementById("tutorialSpaceHeader").innerHTML = "Snakopedia";
+    }
+    else if(tutorialSlide == 5){
+        document.getElementById("tutorialText").innerHTML = "<p>Silk Snake:<br>&emsp;Length: 50 - 750 units<br>&emsp;Diameter: 9 units<br>&emsp;Hatchling Price: $75,000<br>&emsp;Retail Price: $700 per unit<br>&emsp;Diet: Cotton Snake<br>&emsp;Speed: 5 units per frame<br>&emsp;Characteristic: Carnivorous</p><button class='previousButton' onclick='displayPreviousSlide()'><i class='arrow left'></i> :Previous</button><button class='nextButton' onclick='displayNextSlide()'>Next: <i class='arrow right'></i></button>"; 0
+        document.getElementById("tutorialSpaceHeader").innerHTML = "Snakopedia";
+    }
+    else if(tutorialSlide == 6){
+        document.getElementById("tutorialText").innerHTML = "<p>Acrylic Snake:<br>&emsp;Length: 50 - 2500 units<br>&emsp;Diameter: 10 units<br>&emsp;Hatchling Price: $?,???,???<br>&emsp;Retail Price: $50 per unit<br>&emsp;Diet: Snake<br>&emsp;Speed: 5 units per frame<br>&emsp;Characteristic: Synthetic</p><button class='previousButton' onclick='displayPreviousSlide()'><i class='arrow left'></i> :Previous</button>"; 0
+        document.getElementById("tutorialSpaceHeader").innerHTML = "Snakopedia";
+    }
+}
+
+function displayNextSlide(){
+    tutorialSlide += 1;
+    tutorialContent();
+}
+
+function displayPreviousSlide(){
+    tutorialSlide -= 1;
+    tutorialContent();
 }
