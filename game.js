@@ -205,13 +205,12 @@ function draw() {
         textAlign(CENTER, BOTTOM);
         textSize(45);
         stroke("black");
-        strokeWeight(7);
+        strokeWeight(5);
         fill("white");
         text("Game Over: Bankruptcy", width/2, height*3/7);  
         if(sin(frameCount*0.05) > -0.64){  
             textAlign(CENTER, TOP);  
             textSize(30);
-            strokeWeight(5);
             text("Press Space", width/2, height*3/7); 
         }
     }    
@@ -582,6 +581,7 @@ function resetGame(trueReset){
     if(tutorialActive){
         hideTutorialSpace();
     }
+    gameOverScreen = false;
     frameCount = 0;
     gameStatus = "initiation";
 }
