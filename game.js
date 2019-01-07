@@ -289,7 +289,7 @@ function mousePressed() {
             habitat.addDecoration(habitat.amountOfDecorationSpawn);
             startGame();
             if(!window.sessionStorage.tutorialDisplayed){
-                displayTutorial();
+                displayTutorialSpace();
                 window.sessionStorage.tutorialDisplayed = true;
             }
         }
@@ -300,7 +300,7 @@ function mousePressed() {
             habitat.addDecoration(habitat.amountOfDecorationSpawn);
             startGame();
             if(!window.sessionStorage.tutorialDisplayed){
-                displayTutorial();
+                displayTutorialSpace();
                 window.sessionStorage.tutorialDisplayed = true;
             }
         }
@@ -311,7 +311,7 @@ function mousePressed() {
             habitat.addDecoration(habitat.amountOfDecorationSpawn);
             startGame();
             if(!window.sessionStorage.tutorialDisplayed){
-                displayTutorial();
+                displayTutorialSpace();
                 window.sessionStorage.tutorialDisplayed = true;
             }
         }
@@ -433,7 +433,7 @@ function keyPressed(){
             hideTutorialSpace();
         }
         else{
-            displayTutorial();
+            displayTutorialSpace();
         }
     }
     // O Key
@@ -654,7 +654,7 @@ function dragElement(elmnt) {
     }
 }
 
-function displayTutorial(){
+function displayTutorialSpace(){
     document.getElementById("tutorialSpace").setAttribute("style", "display: inline; top: 50%; left: 50%; transform: (-50%, -50%);");  
     tutorialSlide = 1;  
     tutorialContent();
