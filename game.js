@@ -690,19 +690,19 @@ function tutorialContent(){
         document.getElementById("tutorialSpaceHeader").innerHTML = "Instruction";
     }
     else if(tutorialSlide == 3){
-        document.getElementById("tutorialText").innerHTML = "<p>Cotton Snake:<br>&emsp;Length: 50 - 300 units<br>&emsp;Diameter: 12 units<br>&emsp;Hatchling Price: $5,000<br>&emsp;Retail Price: $50 per unit<br>&emsp;Diet: Food Pellet<br>&emsp;Speed: 4 units per frame<br>&emsp;Characteristic: Big Appetite</p><button class='previousButton' onclick='displayPreviousSlide()'><i class='arrow left'></i> :Previous</button><button class='nextButton' onclick='displayNextSlide()'>Next: <i class='arrow right'></i></button>"; 0
+        document.getElementById("tutorialText").innerHTML = "<p>Cotton Snake:<br>&emsp;Length: 50 - 300 units<br>&emsp;Diameter: 12 units<br>&emsp;Hatchling Price: $5,000<br>&emsp;Retail Price: $50 per unit<br>&emsp;Diet: Food Pellet<br>&emsp;Speed: 4 units per frame<br>&emsp;Characteristic: Big Appetite</p><button class='previousButton' onclick='displayPreviousSlide()'><i class='arrow left'></i> :Previous</button><button class='nextButton' onclick='displayNextSlide()'>Next: <i class='arrow right'></i></button>"; 
         document.getElementById("tutorialSpaceHeader").innerHTML = "Snakopedia";
     }
     else if(tutorialSlide == 4){
-        document.getElementById("tutorialText").innerHTML = "<p>Wool Snake:<br>&emsp;Length: 50 - 1000 units<br>&emsp;Diameter: 15 units<br>&emsp;Hatchling Price: $10,000<br>&emsp;Retail Price: $50 per unit<br>&emsp;Diet: Food Pellet<br>&emsp;Speed: 3 units per frame<br>&emsp;Characteristic: Warm-blooded</p><button class='previousButton' onclick='displayPreviousSlide()'><i class='arrow left'></i> :Previous</button><button class='nextButton' onclick='displayNextSlide()'>Next: <i class='arrow right'></i></button>"; 0
+        document.getElementById("tutorialText").innerHTML = "<p>Wool Snake:<br>&emsp;Length: 50 - 1000 units<br>&emsp;Diameter: 15 units<br>&emsp;Hatchling Price: $10,000<br>&emsp;Retail Price: $50 per unit<br>&emsp;Diet: Food Pellet<br>&emsp;Speed: 3 units per frame<br>&emsp;Characteristic: Warm-blooded</p><button class='previousButton' onclick='displayPreviousSlide()'><i class='arrow left'></i> :Previous</button><button class='nextButton' onclick='displayNextSlide()'>Next: <i class='arrow right'></i></button>"; 
         document.getElementById("tutorialSpaceHeader").innerHTML = "Snakopedia";
     }
     else if(tutorialSlide == 5){
-        document.getElementById("tutorialText").innerHTML = "<p>Silk Snake:<br>&emsp;Length: 50 - 750 units<br>&emsp;Diameter: 9 units<br>&emsp;Hatchling Price: $75,000<br>&emsp;Retail Price: $700 per unit<br>&emsp;Diet: Cotton Snake<br>&emsp;Speed: 5 units per frame<br>&emsp;Characteristic: Carnivorous</p><button class='previousButton' onclick='displayPreviousSlide()'><i class='arrow left'></i> :Previous</button><button class='nextButton' onclick='displayNextSlide()'>Next: <i class='arrow right'></i></button>"; 0
+        document.getElementById("tutorialText").innerHTML = "<p>Silk Snake:<br>&emsp;Length: 50 - 750 units<br>&emsp;Diameter: 9 units<br>&emsp;Hatchling Price: $75,000<br>&emsp;Retail Price: $700 per unit<br>&emsp;Diet: Cotton Snake<br>&emsp;Speed: 5 units per frame<br>&emsp;Characteristic: Carnivorous</p><button class='previousButton' onclick='displayPreviousSlide()'><i class='arrow left'></i> :Previous</button><button class='nextButton' onclick='displayNextSlide()'>Next: <i class='arrow right'></i></button>"; 
         document.getElementById("tutorialSpaceHeader").innerHTML = "Snakopedia";
     }
     else if(tutorialSlide == 6){
-        document.getElementById("tutorialText").innerHTML = "<p>Acrylic Snake:<br>&emsp;Length: 50 - 2500 units<br>&emsp;Diameter: 10 units<br>&emsp;Hatchling Price: $?,???,???<br>&emsp;Retail Price: $50 per unit<br>&emsp;Diet: Snake<br>&emsp;Speed: 5 units per frame<br>&emsp;Characteristic: Synthetic</p><button class='previousButton' onclick='displayPreviousSlide()'><i class='arrow left'></i> :Previous</button>"; 0
+        document.getElementById("tutorialText").innerHTML = "<p>Acrylic Snake:<br>&emsp;Length: 50 - 2500 units<br>&emsp;Diameter: 10 units<br>&emsp;Hatchling Price: $?,???,???<br>&emsp;Retail Price: $50 per unit<br>&emsp;Diet: Snake<br>&emsp;Speed: 5 units per frame<br>&emsp;Characteristic: Synthetic</p><button class='previousButton' onclick='displayPreviousSlide()'><i class='arrow left'></i> :Previous</button>"; 
         document.getElementById("tutorialSpaceHeader").innerHTML = "Snakopedia";
     }
 }
